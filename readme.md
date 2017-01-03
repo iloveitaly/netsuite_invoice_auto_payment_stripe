@@ -21,4 +21,7 @@ cp .env-example .env
 
 bundle
 bundle exec ruby pay.rb
+
+# interactive console
+bundle exec irb -r ./console.rb
 ```

@@ -25,6 +25,9 @@ open_invoices.each do |ns_invoice|
   if charger.has_available_payment_source?
     puts "Customer #{charger.stripe_customer.id} has no payment methods. Sending notice."
 
+    # NOTE in thie case, if there is no payment method available, a notice is sent out the day the invoice is due
+    #      this flow can be modified to send a message to users 7 days before the payment is due
+
     Emailer.send_payment_credentials_notice(charger.stripe_customer, ns_invoice)
   else
     if charger.pay_invoice
