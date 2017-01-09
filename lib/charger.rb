@@ -7,6 +7,9 @@ class CustomerCharger
     @stripe_customer = CustomerLinker.customer_from_invoice(ns_invoice)
   end
 
+  # NOTE it would be possible to pre-authorize the charge up to 7 days before the charge is due
+  #      https://support.stripe.com/questions/does-stripe-support-authorize-and-capture
+
   # NOTE instead of managing payment yourself, SuiteSync can handle this part of the process for you.
   #      Link the invoice to the customer you would like to bill. TODO link
 
