@@ -6,21 +6,21 @@ module Emailer
 
     send_email(
       to: stripe_customer.email,
-      subject: "Update your payment credentials",
+      subject: "SuiteSync: Update payment credentials",
       body: <<EOL
-Hello #{stripe_customer.description},
+Hello,
 
-There is not a valid payment method on file to pay an invoice that is due.
+There is not a valid payment method on file to pay invoice #{ns_invoice.tran_id} which is due today.
 
-Please update your payment method:
+Use the link below to pay this invoice. Your payment information will be updated
+when the invoice is paid.
 
 #{collection_link}
 
 Contact us at support@suitesync.io or (415) 523-0948 with any questions.
 
 Thanks
-
-SuiteSync Collection Team
+SuiteSync
 EOL
     )
   end
@@ -30,13 +30,15 @@ EOL
 
     send_email(
       to: stripe_customer.email,
-      subject: "Payment Failure for SuiteSync Invoice #{ns_invoice.tran_id}",
+      subject: "SuiteSync: Payment failure for invoice #{ns_invoice.tran_id}",
       body: <<EOL
-Hello #{stripe_customer.description},
+Hello,
 
-We tried to charge the payment method on file, but the charge failed.
+Invoice #{ns_invoice.tran_id} is due. We attempted to charge the payment method
+on file, but the charge failed.
 
-You can pay off your invoice that is due using the following link:
+Use the link below to pay this invoice. Your payment information will be updated
+when the invoice is paid.
 
 #{collection_link}
 
@@ -45,16 +47,17 @@ When you pay this invoice, your payment method will automatically be updated.
 Contact us at support@suitesync.io or (415) 523-0948 with any questions.
 
 Thanks
-
-SuiteSync Collection Team
+SuiteSync
 EOL
     )
   end
 
   def send_email(to:, subject:, body:)
     response = RestClient.post(ENV['MAILGUN_ENDPOINT'],
-      :from => 'support@suitesync.io',
+      :from => 'payments@suitesync.io',
       :to => 'mike@suitesync.io' || to,
+      # NOTE this email address should change to reflect your collection address!
+      :'h:Reply-To' => 'support@suitesync.io',
       :subject => subject,
       :text => body
     )
