@@ -22,7 +22,7 @@ open_invoices.each do |ns_invoice|
   #      Alternatively (or additionally) you could also update the NetSuite invoice
   #      with information about the error, send a message to your CX team, etc.
 
-  if charger.has_available_payment_source?
+  if !charger.has_available_payment_source?
     puts "Customer #{charger.stripe_customer.id} has no payment methods. Sending notice."
 
     # NOTE in thie case, if there is no payment method available, a notice is sent out the day the invoice is due
