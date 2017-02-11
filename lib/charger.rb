@@ -25,7 +25,7 @@ class CustomerCharger
     #      Example: https://gist.github.com/iloveitaly/968ba7dd8b2d2cde7807e86c6ac32ee6
 
     amount_due = BigDecimal.new(amount_due_string)
-    amount_due_in_cents = amount_due * 100.0
+    amount_due_in_cents = (amount_due * 100.0).to_i
 
     begin
       charge = Stripe::Charge.create(
