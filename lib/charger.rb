@@ -53,6 +53,8 @@ class CustomerCharger
 
       true
     rescue Stripe::CardError => e
+      update_memo(ns_invoice, "Stripe Payment Error: #{e.message}")
+
       return false
     end
   end
@@ -71,6 +73,24 @@ class CustomerCharger
 
     stripe_customer.default_source
   end
+
+  def update_memo(ns_record, memo)
+    if !ns_record.memo.nil? && ns_record.memo.include?(memo)
+      log.warn 'skipping memo, already exists', ns_record: ns_record
+      return
+    end
+
+    NetSuite::Utilities.append_memo(ns_record, memo)
+
+    result = NetSuite::Utilities.backoff { ns_record.update(memo: ns_record.memo) }
+
+    if !result
+      fail "failed to update memo #{ns_record.class}##{ns_record.internal_id} #{ns_record.errors}"
+    end
+
+    ns_record
+  end
+
 
   # http://stackoverflow.com/questions/16810211/netsuite-obtaining-invoice-balance
   def amount_due_for_invoice(ns_invoice)
